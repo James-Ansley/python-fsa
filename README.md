@@ -1,7 +1,7 @@
 # Finite State Automata
 
 A small project demonstrating both deterministic and nondeterministic finite
-automata.
+state machines.
 
 Two classes, `dfa.DFA` and `nfa.NFA` are provided.
 Both have an `accepts` method whose parameters are the symbols a word.
