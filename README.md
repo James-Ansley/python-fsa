@@ -17,7 +17,7 @@ alphabet {0, 1} which contain an even number of 1s
 
 ```mermaid
 graph LR
-    A((A)) & B((B))
+    A(("(A)")) & B((B))
     A -->|0| A
     A -->|1| B
     B -->|0| B
@@ -59,7 +59,7 @@ alphabet {0, 1} whose second to last symbol is 1.
 
 ```mermaid
 graph LR
-    A((A)) & B((B)) & C((C))
+    A((A)) & B((B)) & C(("(C)"))
     A -->|1| B
     A -->|0, 1| A
     B -->|0,1| C
