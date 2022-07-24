@@ -10,19 +10,14 @@ The `NFA` class also has an epsilon object `NFA.epsilon`.
 However, a custom epsilon object can be passed into the constructor as a named
 argument.
 
+To convert an `NFA` to a `DFA`, call the `to_dfa` method on an `NFA` instance.
+
 ## DFA Example
 
 Consider the following DFA that recognises the language of words over the
 alphabet {0, 1} which contain an even number of 1s
 
-```mermaid
-graph LR
-    A(((A))) & B((B))
-    A -->|0| A
-    A -->|1| B
-    B -->|0| B
-    B -->|1| A
-```
+![](assets/dfa_example.svg)
 
 A DFA instance can be constructed:
 
@@ -57,13 +52,7 @@ dfa.accepts(0, 1, 1, 0)  # False
 Consider the following NFA that recognises the language of words over the
 alphabet {0, 1} whose second to last symbol is 1.
 
-```mermaid
-graph LR
-    A((A)) & B((B)) & C(((C)))
-    A -->|1| B
-    A -->|0, 1| A
-    B -->|0,1| C
-```
+![](assets/nfa_example.svg)
 
 An NFA instance can be constructed:
 
@@ -93,3 +82,12 @@ nfa.accepts(0, 1, 1, 0)  # True
 nfa.accepts(0, 0, 0, 1)  # False
 ```
 
+This NFA can be converted to an equivalent DFA by calling `to_dfa`:
+
+```python
+dfa = nfa.to_dfa()
+```
+
+Which produces the following DFA:
+
+![](assets/nfa_to_dfa_ex.svg)
