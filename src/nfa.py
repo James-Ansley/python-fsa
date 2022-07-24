@@ -23,6 +23,7 @@ class NFA(Generic[T, S]):
     ):
         epsilon = epsilon if epsilon is not None else NFA.epsilon
         closures = {s: self.get_closure(s, transition, epsilon) for s in states}
+        final = {s for s in states if len(final_states & closures[s]) != 0}
 
         self.alphabet = alphabet
         self.states = states
@@ -30,9 +31,7 @@ class NFA(Generic[T, S]):
         self.transition = self.hoist_transitions(
             states, transition, epsilon, closures
         )
-        self.final_states = {
-            s for s in states if len(final_states & closures[s]) != 0
-        }
+        self.final_states = frozenset(final)
         self.epsilon = epsilon
 
     def accepts(self, *seq: T) -> bool:
@@ -43,6 +42,29 @@ class NFA(Generic[T, S]):
             )
         return len(current & self.final_states) != 0
 
+    def to_dfa(self) -> DFA:
+        new_transition = {}
+        new_states = {self.initial}
+        queue = deque((self.initial,))
+        while queue:
+            current = queue.pop()
+            for elt in self.alphabet:
+                s1 = (self.transition.get((s, elt), set()) for s in current)
+                s1 = frozenset().union(*s1)
+                if s1 and s1 not in new_states:
+                    queue.append(s1)
+                if s1:
+                    new_transition[(current, elt)] = s1
+                    new_states.add(s1)
+        new_final = frozenset(s for s in new_states if s & self.final_states)
+        return DFA(
+            alphabet=self.alphabet,
+            states=frozenset(new_states),
+            initial=self.initial,
+            transition=new_transition,
+            final_states=new_final,
+        )
+
     @staticmethod
     def hoist_transitions(
             states: S,
@@ -52,13 +74,9 @@ class NFA(Generic[T, S]):
     ) -> Mapping[tuple[S, T], frozenset[S]]:
         transitions = defaultdict(set)
         for state in states:
-            closure = {
-                (s, t): s1
-                for (s, t), s1 in transition.items()
-                if s in closures[state] and t != epsilon
-            }
-            for (s, t), s1 in closure.items():
-                transitions[(state, t)] |= s1
+            for (s, t), s1 in transition.items():
+                if s in closures[state] and t != epsilon:
+                    transitions[(state, t)] |= s1
         return {k: frozenset(v) for k, v in transitions.items()}
 
     @staticmethod
@@ -75,27 +93,3 @@ class NFA(Generic[T, S]):
             queue += next_ - closure
             closure |= next_
         return frozenset(closure)
-
-    def to_dfa(self) -> DFA:
-        new_transition = {}
-        new_states = {self.initial}
-        queue = deque((self.initial,))
-        while queue:
-            current = queue.pop()
-            for elt in self.alphabet:
-                s1 = frozenset().union(
-                    *(self.transition.get((s, elt), set()) for s in current)
-                )
-                if s1 and s1 not in new_states:
-                    queue.append(s1)
-                if s1:
-                    new_transition[(current, elt)] = s1
-                    new_states.add(s1)
-        final = frozenset(s for s in new_states if s & self.final_states)
-        return DFA(
-            alphabet=self.alphabet,
-            states=frozenset(new_states),
-            initial=self.initial,
-            transition=new_transition,
-            final_states=final,
-        )
