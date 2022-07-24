@@ -2,6 +2,8 @@ from collections import defaultdict, deque
 from collections.abc import Mapping
 from typing import Generic, TypeVar
 
+from dfa import DFA
+
 T = TypeVar("T")
 S = TypeVar("S")
 
@@ -73,3 +75,27 @@ class NFA(Generic[T, S]):
             queue += next_ - closure
             closure |= next_
         return frozenset(closure)
+
+    def to_dfa(self) -> DFA:
+        new_transition = {}
+        new_states = {self.initial}
+        queue = deque((self.initial,))
+        while queue:
+            current = queue.pop()
+            for elt in self.alphabet:
+                s1 = frozenset().union(
+                    *(self.transition.get((s, elt), set()) for s in current)
+                )
+                if s1 and s1 not in new_states:
+                    queue.append(s1)
+                if s1:
+                    new_transition[(current, elt)] = s1
+                    new_states.add(s1)
+        final = frozenset(s for s in new_states if s & self.final_states)
+        return DFA(
+            alphabet=self.alphabet,
+            states=frozenset(new_states),
+            initial=self.initial,
+            transition=new_transition,
+            final_states=final,
+        )
