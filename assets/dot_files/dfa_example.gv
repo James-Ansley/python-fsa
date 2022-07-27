@@ -1,0 +1,12 @@
+digraph {
+    rankdir = LR;
+    null [label = " ",shape = none,height = 0,width = 0];
+    {null rank = "min"};
+    node [shape = doublecircle]; A;
+    node [shape = circle];
+    null -> A;
+    A -> A [label = "0"];
+    A -> B [label = "1"];
+    B -> A [label = "1"];
+    B -> B [label = "0"];
+}

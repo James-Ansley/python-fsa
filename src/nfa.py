@@ -2,14 +2,18 @@ from collections import defaultdict, deque
 from collections.abc import Mapping
 from typing import Generic, TypeVar
 
+import pygraphviz as pgv
+import sentinel
+
 from dfa import DFA
+from utils.dot_parsing import *
 
 T = TypeVar("T")
 S = TypeVar("S")
 
 
 class NFA(Generic[T, S]):
-    epsilon = object()
+    epsilon = sentinel.create("epsilon")
 
     def __init__(
             self,
@@ -19,20 +23,19 @@ class NFA(Generic[T, S]):
             initial: S,
             transition: Mapping[tuple[S, T], frozenset[S]],
             final_states: frozenset[S],
-            epsilon: object | T = None
     ):
-        epsilon = epsilon if epsilon is not None else NFA.epsilon
-        closures = {s: self.get_closure(s, transition, epsilon) for s in states}
+        closures = {
+            s: self.get_closure(s, transition, self.epsilon)for s in states
+        }
         final = {s for s in states if len(final_states & closures[s]) != 0}
 
         self.alphabet = alphabet
         self.states = states
         self.initial = closures[initial]
         self.transition = self.hoist_transitions(
-            states, transition, epsilon, closures
+            states, transition, self.epsilon, closures
         )
         self.final_states = frozenset(final)
-        self.epsilon = epsilon
 
     def accepts(self, *seq: T) -> bool:
         current = set(self.initial)
@@ -63,6 +66,17 @@ class NFA(Generic[T, S]):
             initial=self.initial,
             transition=new_transition,
             final_states=new_final,
+        )
+
+    @classmethod
+    def from_dot(cls, data: str):
+        g = pgv.AGraph(string=data)
+        return cls(
+            alphabet=alphabet_of(g),
+            states=states_of(g),
+            initial=initial_state_of(g),
+            transition=nondeterministic_transitions_of(g),
+            final_states=finial_states_of(g),
         )
 
     @staticmethod

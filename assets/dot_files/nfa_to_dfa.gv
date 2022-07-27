@@ -1,0 +1,17 @@
+digraph {
+    rankdir = LR;
+    node [shape = doublecircle; fixedsize = true; width = 0.5; height = 0.5]; AC ABC;
+    node [shape = circle; fixedsize = true; width = 0.5; height = 0.5]; A AB;
+    null [label = " ",shape = none,height = 0,width = 0];
+    {null rank = "min"};
+    {AC AB rank = "same"};
+    null -> A;
+    A -> A [label = "0"];
+    A -> AB [label = "1"];
+    AB -> AC [label = "0"];
+    AB -> ABC [label = "1"];
+    AC -> A [label = "0"];
+    AC -> AB [label = "1"];
+    ABC -> AC [label = "0"];
+    ABC -> ABC [label = "1"];
+}

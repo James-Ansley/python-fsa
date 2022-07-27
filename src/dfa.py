@@ -1,6 +1,10 @@
 from collections.abc import Mapping
 from typing import Generic, TypeVar
 
+import pygraphviz as pgv
+
+from utils.dot_parsing import *
+
 T = TypeVar("T")
 S = TypeVar("S")
 
@@ -26,3 +30,14 @@ class DFA(Generic[T, S]):
         for elt in seq:
             current = self.transition.get((current, elt), None)
         return current in self.final_states
+
+    @classmethod
+    def from_dot(cls, data: str):
+        g = pgv.AGraph(string=data)
+        return cls(
+            alphabet=alphabet_of(g),
+            states=states_of(g),
+            initial=initial_state_of(g),
+            transition=deterministic_transitions_of(g),
+            final_states=finial_states_of(g),
+        )

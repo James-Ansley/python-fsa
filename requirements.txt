@@ -1,0 +1,2 @@
+sentinel~=1.0.0
+pygraphviz~=1.9
