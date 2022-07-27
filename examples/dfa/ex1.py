@@ -4,7 +4,7 @@ which are divisible by 5 (end in 0 or 5 or are empty)
 
 Taken from: https://www.bookofproofs.org/branches/examples-of-dfa/
 """
-from dfa import DFA
+from python_fsa.dfa import DFA
 
 a, b = "a", "b"
 

@@ -3,7 +3,7 @@ from typing import Generic, TypeVar
 
 import pygraphviz as pgv
 
-from utils.dot_parsing import *
+from .utils.dot_parsing import *
 
 T = TypeVar("T")
 S = TypeVar("S")

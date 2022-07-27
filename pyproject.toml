@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-fsa"
+version = "0.0.2"
+description = "Small Finite State Automata utilities"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "CC0"}
+dependencies = [
+    'sentinel~=1.0.0',
+    'pygraphviz~=1.9',
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

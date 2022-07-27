@@ -5,8 +5,8 @@ from typing import Generic, TypeVar
 import pygraphviz as pgv
 import sentinel
 
-from dfa import DFA
-from utils.dot_parsing import *
+from .dfa import DFA
+from .utils.dot_parsing import *
 
 T = TypeVar("T")
 S = TypeVar("S")
