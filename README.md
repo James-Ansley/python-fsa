@@ -132,3 +132,23 @@ digraph {
 
 nfa = NFA.from_dot(dot)
 ```
+
+## Install Notes
+
+Python-fsa depends on graphviz and pygraphviz.
+There seem to be some global options that are needed to install pygraphviz.
+I have only tested this on MacOS and have found the following commands to work:
+
+```
+brew install graphviz
+pip install \
+    --global-option=build_ext \
+    --global-option="-I/opt/homebrew/Cellar/graphviz/7.0.0/include/" \
+    --global-option="-L/opt/homebrew/Cellar/graphviz/7.0.0/lib" \
+    pygraphviz
+pip install python-fsa
+```
+
+Replace the `7.0.0` version number with the current version of graphviz.
+See [this comment](https://github.com/pypa/setuptools/issues/2740#issuecomment-1087875770)
+for more.

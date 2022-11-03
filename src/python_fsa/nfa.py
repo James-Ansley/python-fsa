@@ -34,7 +34,8 @@ class NFA(Generic[T, S]):
         self.states = states
         self.initial = initial
         self.transition = transition
-        self.final_states = frozenset(
+        self.final_states = final_states
+        self._hoisted_final_states = frozenset(
             s for s in states if len(final_states & self._closures[s]) != 0
         )
 
@@ -44,7 +45,7 @@ class NFA(Generic[T, S]):
             current = set().union(*(
                 self._hoisted_transition.get((s, elt), set()) for s in current
             ))
-        return len(current & self.final_states) != 0
+        return len(current & self._hoisted_final_states) != 0
 
     def to_dfa(self) -> DFA[T, frozenset[S]]:
         new_transition = {}
@@ -62,7 +63,9 @@ class NFA(Generic[T, S]):
                 if s1:
                     new_transition[(current, elt)] = s1
                     new_states.add(s1)
-        new_final = frozenset(s for s in new_states if s & self.final_states)
+        new_final = frozenset(
+            s for s in new_states if s & self._hoisted_final_states
+        )
         return DFA(
             alphabet=self.alphabet,
             states=frozenset(new_states),
