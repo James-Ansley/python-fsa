@@ -104,6 +104,17 @@ This NFA can be converted to an equivalent DFA by calling `to_dfa`:
 dfa = nfa.to_dfa()
 ```
 
+However, this will result in a DFA of type `DFA[T, frozenset[S]]` – as the
+states of the resulting DFA are from the powerset of NFA states. This can cause
+errors in writing the resulting DFA to dot-format.
+
+The `frozenset[S]` states can be squashed to strings by calling `dfa.squash()`,
+which stringifies and joins states in each `frozenset[S]`:
+
+```python
+dfa = nfa.to_dfa().squash()
+```
+
 Which produces the following DFA:
 
 ![](assets/nfa_to_dfa_ex.svg)
