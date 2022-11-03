@@ -6,10 +6,9 @@ state machines.
 Two classes, `dfa.DFA` and `nfa.NFA` are provided.
 Both have an `accepts` method whose parameters are the symbols a word.
 
-The `NFA` class also has an epsilon object `NFA.epsilon`.
-This is equivalent to the singleton `sentinel.create("epsilon")` (see
-the [sentinel package](https://github.com/eddieantonio/sentinel) documentation
-for more).
+An `EPSILON` singleton is included in python-fsa. The `EPSILON` singleton
+provides the epsilon symbol, ε, with `EPSILON.symbol`; this symbol is also
+returned from the `EPSILON.__str__` method.
 
 To convert an `NFA` to a `DFA`, call the `to_dfa` method on an `NFA` instance.
 
@@ -39,7 +38,7 @@ alphabet {0, 1} which contain an even number of 1s
 A DFA instance can be constructed:
 
 ```python
-from dfa import DFA
+from python_fsa import DFA
 
 a, b = "a", "b"
 
@@ -74,7 +73,7 @@ alphabet {0, 1} whose second to last symbol is 1.
 An NFA instance can be constructed:
 
 ```python
-from nfa import NFA
+from python_fsa import NFA
 
 a, b, c = "a", "b", "c"
 
