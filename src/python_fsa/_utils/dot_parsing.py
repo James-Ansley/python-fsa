@@ -2,11 +2,9 @@ import re
 from collections import defaultdict
 from collections.abc import Mapping
 
-import sentinel
 from pygraphviz import AGraph
 
-EPSILON_STRING = "\u03B5"
-EPSILON = sentinel.create("epsilon")
+from .epsilon import EPSILON
 
 __all__ = [
     "alphabet_of",
@@ -28,7 +26,7 @@ def alphabet_of(g: AGraph) -> frozenset[str]:
         s = edge[0].name
         if s != "null":
             alphabet = alphabet.union(
-                EPSILON if label == EPSILON_STRING else label
+                EPSILON if label == EPSILON.symbol else label
                 for label in split_label(edge.attr["label"])
             )
     return frozenset(alphabet)
@@ -68,5 +66,6 @@ def nondeterministic_transitions_of(
         labels = split_label(edge.attr["label"])
         if s != "null":
             for label in labels:
+                label = EPSILON if label == EPSILON.symbol else label
                 transition[(s, label)].add(s1)
     return {k: frozenset(v) for k, v in transition.items()}

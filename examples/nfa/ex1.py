@@ -5,11 +5,11 @@ which consist of an even number of 1s or 0s
 Taken from:
     https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton#Example_2
 """
-
+from python_fsa import EPSILON
 from python_fsa.nfa import NFA
 
 s0, s1, s2, s3, s4 = "s0", "s1", "s2", "s3", "s4"
-E = NFA.epsilon
+E = EPSILON
 
 nfa = NFA(
     alphabet=frozenset((1, 0)),

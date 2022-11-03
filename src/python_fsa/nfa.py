@@ -3,57 +3,60 @@ from collections.abc import Mapping
 from typing import Generic, TypeVar
 
 import pygraphviz as pgv
-import sentinel
 
+from ._utils.dot_parsing import *
+from ._utils.dot_writing import format_nfa
+from ._utils.epsilon import EPSILON
 from .dfa import DFA
-from .utils.dot_parsing import *
 
 T = TypeVar("T")
 S = TypeVar("S")
+Alphabet = frozenset[T]
+States = frozenset[S]
+Transitions = Mapping[tuple[S, T], States]
 
 
 class NFA(Generic[T, S]):
-    epsilon = sentinel.create("epsilon")
-
     def __init__(
             self,
             *,
-            states: frozenset[S],
-            alphabet: frozenset[T],
+            states: States,
+            alphabet: Alphabet,
             initial: S,
-            transition: Mapping[tuple[S, T], frozenset[S]],
-            final_states: frozenset[S],
+            transition: Transitions,
+            final_states: States,
     ):
-        closures = {
-            s: self.get_closure(s, transition, self.epsilon)for s in states
-        }
-        final = {s for s in states if len(final_states & closures[s]) != 0}
-
+        self._closures = {s: self.get_closure(s, transition) for s in states}
+        self._hoisted_transition = self.hoist_closures(
+            states, transition, self._closures
+        )
         self.alphabet = alphabet
         self.states = states
-        self.initial = closures[initial]
-        self.transition = self.hoist_transitions(
-            states, transition, self.epsilon, closures
+        self.initial = initial
+        self.transition = transition
+        self.final_states = frozenset(
+            s for s in states if len(final_states & self._closures[s]) != 0
         )
-        self.final_states = frozenset(final)
 
     def accepts(self, *seq: T) -> bool:
-        current = set(self.initial)
+        current = set(self._closures[self.initial])
         for elt in seq:
-            current = set().union(
-                *(self.transition.get((s, elt), set()) for s in current)
-            )
+            current = set().union(*(
+                self._hoisted_transition.get((s, elt), set()) for s in current
+            ))
         return len(current & self.final_states) != 0
 
-    def to_dfa(self) -> DFA:
+    def to_dfa(self) -> DFA[T, frozenset[S]]:
         new_transition = {}
-        new_states = {self.initial}
-        queue = deque((self.initial,))
+        new_states = {self._closures[self.initial]}
+        queue = deque(new_states)
         while queue:
             current = queue.pop()
             for elt in self.alphabet:
-                s1 = (self.transition.get((s, elt), set()) for s in current)
-                s1 = frozenset().union(*s1)
+                s1 = frozenset().union(*(
+                    self._hoisted_transition.get((s, elt), set())
+                    for s in current
+                ))
                 if s1 and s1 not in new_states:
                     queue.append(s1)
                 if s1:
@@ -63,13 +66,13 @@ class NFA(Generic[T, S]):
         return DFA(
             alphabet=self.alphabet,
             states=frozenset(new_states),
-            initial=self.initial,
+            initial=self._closures[self.initial],
             transition=new_transition,
             final_states=new_final,
         )
 
     @classmethod
-    def from_dot(cls, data: str):
+    def from_dot(cls, data: str) -> "NFA[str, str]":
         g = pgv.AGraph(string=data)
         return cls(
             alphabet=alphabet_of(g),
@@ -79,31 +82,27 @@ class NFA(Generic[T, S]):
             final_states=finial_states_of(g),
         )
 
+    def to_dot(self):
+        return format_nfa(self)
+
     @staticmethod
-    def hoist_transitions(
-            states: S,
-            transition: Mapping[tuple[S, T], frozenset[S]],
-            epsilon: object | T,
-            closures: Mapping[S: frozenset[S]]
-    ) -> Mapping[tuple[S, T], frozenset[S]]:
+    def hoist_closures(
+            states: S, transition: Transitions, closures: Mapping[S: States],
+    ) -> Transitions:
         transitions = defaultdict(set)
         for state in states:
             for (s, t), s1 in transition.items():
-                if s in closures[state] and t != epsilon:
+                if s in closures[state] and t != EPSILON:
                     transitions[(state, t)] |= s1
         return {k: frozenset(v) for k, v in transitions.items()}
 
     @staticmethod
-    def get_closure(
-            state: S,
-            transition: Mapping[tuple[S, T], frozenset[S]],
-            epsilon: object | T,
-    ) -> frozenset[S]:
+    def get_closure(state: S, transition: Transitions) -> States:
         closure = {state}
         queue = deque(closure)
         while queue:
             current = queue.pop()
-            next_ = transition.get((current, epsilon), frozenset())
+            next_ = transition.get((current, EPSILON), frozenset())
             queue += next_ - closure
             closure |= next_
         return frozenset(closure)

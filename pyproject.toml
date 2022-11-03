@@ -10,7 +10,6 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "CC0"}
 dependencies = [
-    'sentinel~=1.0.0',
     'pygraphviz~=1.9',
 ]
 
