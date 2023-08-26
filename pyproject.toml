@@ -5,13 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "python-fsa"
 version = "0.0.4"
-description = "Small Finite State Automata utilities"
+description = "Finite State Automata utilities"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "CC0"}
-dependencies = [
-    'pygraphviz~=1.9',
-]
+dynamic = ["optional-dependencies"]
+
+[tool.setuptools.dynamic]
+optional-dependencies.graphviz = { file = ["requirements.txt"] }
 
 [tool.setuptools.packages.find]
 where = ["src"]
