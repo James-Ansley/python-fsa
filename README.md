@@ -3,6 +3,10 @@
 A small project demonstrating both deterministic and nondeterministic finite
 state machines.
 
+## Docs
+
+https://python-fsa.rtfd.io/
+
 ## Install
 
 ```
