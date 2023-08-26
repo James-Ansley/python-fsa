@@ -3,6 +3,8 @@
 A small project demonstrating both deterministic and nondeterministic finite
 state machines.
 
+![](assets/meme.png)
+
 ## Docs
 
 https://python-fsa.rtfd.io/
