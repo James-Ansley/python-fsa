@@ -17,24 +17,9 @@ In order to use the python-fsa :func:`~python_fsa.graph.render`,
 :func:`~python_fsa.graph.nfa_from_dot` functions, pygraphviz will need to be
 installed.
 
-See the `PyGraphviz FAQ
-<https://pygraphviz.github.io/documentation/stable/reference/faq.html>`_
+See the `PyGraphviz install notes
+<https://github.com/pygraphviz/pygraphviz/blob/main/INSTALL.txt>`_
 for more information on how to install this.
-
-For macOS, the path to Graphviz needs to be specified when installing.
-For example, if brew installing graphviz:
-
-::
-
-    brew install graphviz
-    pip install \
-        --global-option=build_ext \
-        --global-option="-I/opt/homebrew/Cellar/graphviz/8.1.0/include/" \
-        --global-option="-L/opt/homebrew/Cellar/graphviz/8.1.0/lib" \
-        pygraphviz
-    pip install python-fsa
-
-Replace the version ``8.1.0`` with your current version of Graphviz.
 
 This is not needed if the aforementioned functions are not needed.
 

@@ -31,6 +31,11 @@ Taken from: https://www.bookofproofs.org/branches/examples-of-dfa/
         final=(a,),
     )
 
+.. figure:: assets/dfa_example1.svg
+   :alt: A DFA with two states: a and b. The initial and final state is a. The alphabet is the digits 0 to 9. All 0s and 5s go to state a and all other digits go to state b for both nodes.
+
+   ``render(dfa, "assets/dfa_example1.svg")``
+
 
 Example 2
 ^^^^^^^^^
@@ -63,6 +68,10 @@ Taken from: https://www.bookofproofs.org/branches/examples-of-dfa/
         final=frozenset((c,))
     )
 
+.. figure:: assets/dfa_example2.svg
+   :alt: A chain of four nodes, the first is the initial and the third is the final state. Each node has a transition to itself with the word "0", and a transition to the next node with the word "1", except the last where both 0 and one transition to itself.
+
+   ``render(dfa, "assets/dfa_example2.svg")``
 
 Example 3
 ^^^^^^^^^
@@ -79,17 +88,18 @@ Taken from: https://www.bookofproofs.org/branches/examples-of-dfa/
     a, b = "a", "b"
 
     dfa = DFA(
-        alphabet=frozenset((0, 1)),
-        states=frozenset((a, b)),
+        alphabet=(0, 1),
+        states=(a, b),
         initial=a,
-        transitions={
-            (a, 0): a,
-            (a, 1): b,
-            (b, 0): b,
-            (b, 1): a,
-        },
-        final=frozenset((a,))
+        transitions={(a, 0): a, (a, 1): b, (b, 0): b, (b, 1): a},
+        final=(a,),
     )
+
+
+.. figure:: assets/dfa_example3.svg
+   :alt: Two nodes, the first is the initial and final state. both nodes transition to each other with the word "1" and transition to themselves with the word "0"
+
+   ``render(dfa, "assets/dfa_example3.svg")``
 
 NFAs
 ----
@@ -110,22 +120,27 @@ Taken from: https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton#Exam
     E = NFA.EPSILON
 
     nfa = NFA(
-        alphabet=frozenset((1, 0)),
-        states=frozenset((s0, s1, s2, s3, s4)),
+        alphabet=(1, 0),
+        states=(s0, s1, s2, s3, s4),
         initial=s0,
         transitions={
-            (s0, E): frozenset((s1, s3)),
-            (s1, 0): frozenset((s2,)),
-            (s1, 1): frozenset((s1,)),
-            (s2, 0): frozenset((s1,)),
-            (s2, 1): frozenset((s2,)),
-            (s3, 0): frozenset((s3,)),
-            (s3, 1): frozenset((s4,)),
-            (s4, 0): frozenset((s4,)),
-            (s4, 1): frozenset((s3,)),
+            (s0, E): (s1, s3),
+            (s1, 0): (s2,),
+            (s1, 1): (s1,),
+            (s2, 0): (s1,),
+            (s2, 1): (s2,),
+            (s3, 0): (s3,),
+            (s3, 1): (s4,),
+            (s4, 0): (s4,),
+            (s4, 1): (s3,),
         },
-        final=frozenset((s1, s3,)),
+        final=(s1, s3,),
     )
+
+.. figure:: assets/nfa_example1.svg
+   :alt: An initial state with two epsilon edges to two version of DFA example 3 described above – where one copy has the 0s and 1s flipped
+
+   ``render(nfa, "assets/nfa_example1.svg")``
 
 Example 2
 ^^^^^^^^^
@@ -142,17 +157,23 @@ Taken from: https://www.bookofproofs.org/branches/examples-of-nfa/
     a, b, c = "a", "b", "c"
 
     nfa = NFA(
-        alphabet=frozenset((1, 0)),
-        states=frozenset((a, b, c)),
+        alphabet=(1, 0),
+        states=(a, b, c),
         initial=a,
         transitions={
-            (a, 0): frozenset((a,)),
-            (a, 1): frozenset((a, b)),
-            (b, 0): frozenset((c,)),
-            (b, 1): frozenset((c,)),
+            (a, 0): (a,),
+            (a, 1): (a, b),
+            (b, 0): (c,),
+            (b, 1): (c,),
         },
-        final=frozenset((c,)),
+        final=(c,),
     )
+
+
+.. figure:: assets/nfa_example2.svg
+   :alt: Three nodes. The first is the initial and has a 0 and 1 transition to itself, and a one transition to the next node. The next node has a 0 and 1 transition to the last node, the last node is the final state and has no transitions.
+
+   ``render(nfa, "assets/nfa_example2.svg")``
 
 
 Example 3
@@ -170,13 +191,18 @@ Taken from: https://www.bookofproofs.org/branches/examples-of-nfa/
     a, b, c = "a", "b", "c"
 
     nfa = NFA(
-        alphabet=frozenset((1, 0)),
-        states=frozenset((a, b, c)),
+        alphabet=(1, 0),
+        states=(a, b, c),
         initial=a,
         transitions={
-            (a, 1): frozenset((b,)),
-            (b, 0): frozenset((a, c)),
-            (c, 1): frozenset((a,)),
+            (a, 1): (b,),
+            (b, 0): (a, c),
+            (c, 1): (a,),
         },
-        final=frozenset((a,)),
+        final=(a,),
     )
+
+.. figure:: assets/nfa_example3.svg
+   :alt: Three nodes: a, b, and c. Node a is the initial and final, it transitions to node b with the word "1". Node b transitions to node a and c with the word "0". Node c transitions to node a wit the word "1".
+
+   ``render(nfa, "assets/nfa_example3.svg")``

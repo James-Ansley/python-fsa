@@ -15,28 +15,8 @@ https://python-fsa.rtfd.io/
 pip install python-fsa
 ```
 
-<details>
-<summary>Installation Notes</summary>
-
-Python-fsa depends on graphviz and pygraphviz.
-There seem to be some global options that are needed to install pygraphviz.
-I have only tested this on macOS and have found the following commands to work:
-
-```
-brew install graphviz
-pip install \
-    --global-option=build_ext \
-    --global-option="-I/opt/homebrew/Cellar/graphviz/8.0.5/include/" \
-    --global-option="-L/opt/homebrew/Cellar/graphviz/8.0.5/lib" \
-    pygraphviz
-pip install python-fsa
-```
-
-Replace the `8.0.5` version number with the current version of graphviz.
-See [this comment](https://github.com/pypa/setuptools/issues/2740#issuecomment-1087875770)
-for more.
-
-</details>
+Python-fsa depends on graphviz and pygraphviz. In order to install graphviz,
+see [their documentation](https://github.com/pygraphviz/pygraphviz/blob/main/INSTALL.txt)
 
 ## Examples
 
@@ -55,8 +35,8 @@ from python_fsa.dfa import DFA
 a, b = "a", "b"
 
 dfa = DFA(
-    alphabet=frozenset((0, 1)),
-    states=frozenset((a, b)),
+    alphabet=(0, 1),
+    states=(a, b),
     initial=a,
     transitions={
         (a, 0): a,
@@ -64,7 +44,7 @@ dfa = DFA(
         (b, 0): b,
         (b, 1): a,
     },
-    final=frozenset((a,)),
+    final=(a,),
 )
 ```
 
@@ -101,16 +81,16 @@ from python_fsa.nfa import NFA
 a, b, c = "a", "b", "c"
 
 nfa = NFA(
-    alphabet=frozenset((1, 0)),
-    states=frozenset((a, b, c)),
+    alphabet=(1, 0),
+    states=(a, b, c),
     initial=a,
     transitions={
-        (a, 0): frozenset((a,)),
-        (a, 1): frozenset((a, b)),
-        (b, 0): frozenset((c,)),
-        (b, 1): frozenset((c,)),
+        (a, 0): (a,),
+        (a, 1): (a, b),
+        (b, 0): (c,),
+        (b, 1): (c,),
     },
-    final=frozenset((c,)),
+    final=(c,),
 )
 ```
 
